@@ -1,6 +1,6 @@
 # Deploy and Host WordPress with Railway
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/wordpress-7-turbo-redis-cache-mariadb)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/wordpress-7-turbo-redis-cache-mariadb?referralCode=20H68q)
 
 Run a production-ready WordPress site on Railway with MariaDB, a Redis object cache, tuned PHP and a real cron schedule. The site installs itself on first boot with a generated admin password, keeps plugins, themes and uploads on a persistent volume, and avoids the Apache "More than one MPM loaded" crash. Community template.
 
