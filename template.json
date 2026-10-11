@@ -1,0 +1,399 @@
+{
+  "name": "WordPress 7 Turbo (Redis Cache + MariaDB)",
+  "description": "Fast, persistent WordPress with object caching, tuned PHP and real cron.",
+  "category": "CMS",
+  "tags": [
+    "wordpress",
+    "cms",
+    "php",
+    "mariadb",
+    "redis",
+    "blog",
+    "website"
+  ],
+  "upstream": {
+    "repo": "docker-library/wordpress",
+    "version": "7.1.3-php8.3-apache",
+    "checked": "2026-10-10"
+  },
+  "services": {
+    "WordPress": {
+      "icon": "https://cdn.simpleicons.org/wordpress/21759B",
+      "source": {
+        "repo": "baranberkay96/wordpress-turbo-railway",
+        "rootDirectory": "/services/wordpress"
+      },
+      "startCommand": null,
+      "preDeployCommand": null,
+      "healthcheckPath": "/healthz",
+      "healthcheckTimeout": 300,
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": true,
+      "targetPort": 80,
+      "tcpProxy": null,
+      "volume": {
+        "mountPath": "/var/www/html/wp-content"
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "80",
+          "description": "Port Apache listens on; the public domain targets it.",
+          "required": false
+        },
+        "WP_PUBLIC_URL": {
+          "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "Canonical site URL (WP_HOME/WP_SITEURL). Change to https://your-domain when you add a custom domain.",
+          "required": false
+        },
+        "WORDPRESS_DB_HOST": {
+          "defaultValue": "${{MariaDB.RAILWAY_PRIVATE_DOMAIN}}:3306",
+          "description": "MariaDB host:port on the private network.",
+          "required": false
+        },
+        "WORDPRESS_DB_NAME": {
+          "defaultValue": "${{MariaDB.MARIADB_DATABASE}}",
+          "description": "WordPress database name.",
+          "required": false
+        },
+        "WORDPRESS_DB_USER": {
+          "defaultValue": "${{MariaDB.MARIADB_USER}}",
+          "description": "WordPress database user.",
+          "required": false
+        },
+        "WORDPRESS_DB_PASSWORD": {
+          "defaultValue": "${{MariaDB.MARIADB_PASSWORD}}",
+          "description": "WordPress database password.",
+          "required": false
+        },
+        "WORDPRESS_TABLE_PREFIX": {
+          "defaultValue": "wp_",
+          "description": "Database table prefix. Do not change after installation.",
+          "required": false
+        },
+        "WORDPRESS_AUTH_KEY": {
+          "defaultValue": "${{secret(64)}}",
+          "description": "WordPress AUTH_KEY (random, generated once).",
+          "required": false
+        },
+        "WORDPRESS_SECURE_AUTH_KEY": {
+          "defaultValue": "${{secret(64)}}",
+          "description": "WordPress SECURE_AUTH_KEY (random, generated once).",
+          "required": false
+        },
+        "WORDPRESS_LOGGED_IN_KEY": {
+          "defaultValue": "${{secret(64)}}",
+          "description": "WordPress LOGGED_IN_KEY (random, generated once).",
+          "required": false
+        },
+        "WORDPRESS_NONCE_KEY": {
+          "defaultValue": "${{secret(64)}}",
+          "description": "WordPress NONCE_KEY (random, generated once).",
+          "required": false
+        },
+        "WORDPRESS_AUTH_SALT": {
+          "defaultValue": "${{secret(64)}}",
+          "description": "WordPress AUTH_SALT (random, generated once).",
+          "required": false
+        },
+        "WORDPRESS_SECURE_AUTH_SALT": {
+          "defaultValue": "${{secret(64)}}",
+          "description": "WordPress SECURE_AUTH_SALT (random, generated once).",
+          "required": false
+        },
+        "WORDPRESS_LOGGED_IN_SALT": {
+          "defaultValue": "${{secret(64)}}",
+          "description": "WordPress LOGGED_IN_SALT (random, generated once).",
+          "required": false
+        },
+        "WORDPRESS_NONCE_SALT": {
+          "defaultValue": "${{secret(64)}}",
+          "description": "WordPress NONCE_SALT (random, generated once).",
+          "required": false
+        },
+        "WORDPRESS_CONFIG_EXTRA": {
+          "defaultValue": "",
+          "description": "Optional raw PHP appended to wp-config.php (evaluated before the template defaults, so it can override them).",
+          "required": false
+        },
+        "WP_ADMIN_EMAIL": {
+          "defaultValue": "",
+          "description": "Email for the first administrator account (used for password resets and admin notices).",
+          "required": true
+        },
+        "WP_ADMIN_USER": {
+          "defaultValue": "siteadmin",
+          "description": "Username of the first administrator, created on first boot.",
+          "required": false
+        },
+        "WP_ADMIN_PASSWORD": {
+          "defaultValue": "${{secret(24)}}",
+          "description": "Password of the first administrator (generated). Only used for the initial install; change it in WordPress afterwards.",
+          "required": false
+        },
+        "WP_SITE_TITLE": {
+          "defaultValue": "My WordPress Site",
+          "description": "Site title used for the initial install.",
+          "required": false
+        },
+        "WP_LOCALE": {
+          "defaultValue": "en_US",
+          "description": "Language installed and activated on first install (e.g. de_DE, tr_TR).",
+          "required": false
+        },
+        "WP_REDIS_HOST": {
+          "defaultValue": "${{Redis.REDISHOST}}",
+          "description": "Redis host for the object cache (private network).",
+          "required": false
+        },
+        "WP_REDIS_PORT": {
+          "defaultValue": "${{Redis.REDISPORT}}",
+          "description": "Redis port.",
+          "required": false
+        },
+        "WP_REDIS_PASSWORD": {
+          "defaultValue": "${{Redis.REDIS_PASSWORD}}",
+          "description": "Redis password.",
+          "required": false
+        },
+        "WP_REDIS_PREFIX": {
+          "defaultValue": "wp:",
+          "description": "Key prefix for object cache entries (lets several sites share one Redis).",
+          "required": false
+        },
+        "WP_REDIS_MAXTTL": {
+          "defaultValue": "604800",
+          "description": "Maximum lifetime in seconds for cached objects (7 days) so Redis memory stays bounded.",
+          "required": false
+        },
+        "WP_REDIS_AUTOENABLE": {
+          "defaultValue": "true",
+          "description": "Install/activate Redis Object Cache and enable its drop-in on every boot. Set false to manage caching yourself.",
+          "required": false
+        },
+        "REDIS_CACHE_PLUGIN_VERSION": {
+          "defaultValue": "3.0.0",
+          "description": "Redis Object Cache plugin version installed on first boot (later updates happen in the dashboard).",
+          "required": false
+        },
+        "WP_DISABLE_PAGELOAD_CRON": {
+          "defaultValue": "true",
+          "description": "Disable WP-Cron on page loads; the WP Cron service runs it every 5 minutes instead.",
+          "required": false
+        },
+        "WP_MEMORY_LIMIT": {
+          "defaultValue": "256M",
+          "description": "WordPress front-end memory limit.",
+          "required": false
+        },
+        "WP_MAX_MEMORY_LIMIT": {
+          "defaultValue": "512M",
+          "description": "WordPress admin memory limit (image processing, imports).",
+          "required": false
+        },
+        "WP_DISALLOW_FILE_EDIT": {
+          "defaultValue": "true",
+          "description": "Hide the in-dashboard theme/plugin code editor (security hardening).",
+          "required": false
+        },
+        "WP_LOCK_CORE_UPDATES": {
+          "defaultValue": "true",
+          "description": "Hide the one-click core update: core comes from the image and would revert on redeploy.",
+          "required": false
+        },
+        "PHP_MEMORY_LIMIT": {
+          "defaultValue": "256M",
+          "description": "PHP memory_limit per request.",
+          "required": false
+        },
+        "PHP_UPLOAD_MAX_FILESIZE": {
+          "defaultValue": "64M",
+          "description": "Maximum upload size per file.",
+          "required": false
+        },
+        "PHP_POST_MAX_SIZE": {
+          "defaultValue": "64M",
+          "description": "Maximum POST body size (keep >= upload size).",
+          "required": false
+        },
+        "PHP_MAX_EXECUTION_TIME": {
+          "defaultValue": "120",
+          "description": "PHP max_execution_time / max_input_time in seconds.",
+          "required": false
+        },
+        "PHP_OPCACHE_MEMORY": {
+          "defaultValue": "192",
+          "description": "OPcache shared memory in MB.",
+          "required": false
+        },
+        "APACHE_MAX_REQUEST_WORKERS": {
+          "defaultValue": "20",
+          "description": "Max concurrent PHP workers (prefork). Peak RAM is roughly workers x 60 MB.",
+          "required": false
+        }
+      }
+    },
+    "MariaDB": {
+      "icon": "https://cdn.simpleicons.org/mariadb/003545",
+      "source": {
+        "image": "mariadb:12.3.3"
+      },
+      "startCommand": "docker-entrypoint.sh mariadbd --innodb-buffer-pool-size=256M --max-allowed-packet=64M --max-connections=100",
+      "preDeployCommand": null,
+      "healthcheckPath": null,
+      "healthcheckTimeout": null,
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": false,
+      "targetPort": null,
+      "tcpProxy": null,
+      "volume": {
+        "mountPath": "/var/lib/mysql"
+      },
+      "variables": {
+        "MARIADB_DATABASE": {
+          "defaultValue": "wordpress",
+          "description": "Database created on first start.",
+          "required": false
+        },
+        "MARIADB_USER": {
+          "defaultValue": "wordpress",
+          "description": "Application user created on first start.",
+          "required": false
+        },
+        "MARIADB_PASSWORD": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Application user password (generated).",
+          "required": false
+        },
+        "MARIADB_ROOT_PASSWORD": {
+          "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Root password (generated).",
+          "required": false
+        },
+        "MARIADB_AUTO_UPGRADE": {
+          "defaultValue": "1",
+          "description": "Run mariadb-upgrade automatically after the image version changes.",
+          "required": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "60",
+          "description": "Give MariaDB time to shut down cleanly on redeploy.",
+          "required": false
+        },
+        "MYSQLHOST": {
+          "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Private host (also used by Railway's Data panel).",
+          "required": false
+        },
+        "MYSQLPORT": {
+          "defaultValue": "3306",
+          "description": "MariaDB port.",
+          "required": false
+        },
+        "MYSQLUSER": {
+          "defaultValue": "${{MARIADB_USER}}",
+          "description": "User for Railway's Data panel.",
+          "required": false
+        },
+        "MYSQLPASSWORD": {
+          "defaultValue": "${{MARIADB_PASSWORD}}",
+          "description": "Password for Railway's Data panel.",
+          "required": false
+        },
+        "MYSQLDATABASE": {
+          "defaultValue": "${{MARIADB_DATABASE}}",
+          "description": "Database for Railway's Data panel.",
+          "required": false
+        },
+        "MYSQL_URL": {
+          "defaultValue": "mysql://${{MARIADB_USER}}:${{MARIADB_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:3306/${{MARIADB_DATABASE}}",
+          "description": "Private connection URL (MySQL protocol).",
+          "required": false
+        }
+      }
+    },
+    "Redis": {
+      "icon": "https://cdn.sanity.io/images/sy1jschh/production/0ce0bfdcfbdbf69662b1116671f97c2dd788b655-157x157.svg",
+      "source": {
+        "image": "redis:8.2"
+      },
+      "startCommand": "/bin/sh -c \"rm -rf $RAILWAY_VOLUME_MOUNT_PATH/lost+found/ && exec docker-entrypoint.sh redis-server --requirepass $REDIS_PASSWORD --save 60 1 --dir $RAILWAY_VOLUME_MOUNT_PATH\"",
+      "preDeployCommand": null,
+      "healthcheckPath": null,
+      "healthcheckTimeout": null,
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10,
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": false,
+      "targetPort": null,
+      "tcpProxy": null,
+      "volume": {
+        "mountPath": "/data"
+      },
+      "variables": {
+        "REDISHOST": {
+          "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Private network hostname of the Redis service, only resolvable from services in the same environment",
+          "required": false
+        },
+        "REDISPORT": {
+          "defaultValue": "6379",
+          "description": "Port that Redis listens on",
+          "required": false
+        },
+        "REDISUSER": {
+          "defaultValue": "default",
+          "description": "Username for authenticating with Redis",
+          "required": false
+        },
+        "REDIS_URL": {
+          "defaultValue": "redis://${{ REDISUSER }}:${{ REDIS_PASSWORD }}@${{ REDISHOST }}:${{ REDISPORT }}",
+          "description": "Connection string for connecting to Redis using the private network",
+          "required": false
+        },
+        "REDISPASSWORD": {
+          "defaultValue": "${{REDIS_PASSWORD}}",
+          "description": "Alias of REDIS_PASSWORD for clients that expect the unseparated name",
+          "required": false
+        },
+        "REDIS_PASSWORD": {
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\") }}",
+          "description": "Randomly generated password for authenticating with Redis",
+          "required": false
+        }
+      }
+    },
+    "WP Cron": {
+      "icon": "https://cdn.simpleicons.org/curl/073551",
+      "source": {
+        "image": "curlimages/curl:8.22.0"
+      },
+      "startCommand": "/bin/sh -c 'curl -fsS --max-time 290 --retry 3 --retry-delay 10 --retry-connrefused -o /dev/null -w \"wp-cron.php HTTP %{http_code} in %{time_total}s\\n\" \"$WP_CRON_URL\"'",
+      "preDeployCommand": null,
+      "healthcheckPath": null,
+      "healthcheckTimeout": null,
+      "restartPolicyType": "NEVER",
+      "restartPolicyMaxRetries": null,
+      "numReplicas": 1,
+      "cronSchedule": "*/5 * * * *",
+      "publicDomain": false,
+      "targetPort": null,
+      "tcpProxy": null,
+      "volume": null,
+      "variables": {
+        "WP_CRON_URL": {
+          "defaultValue": "http://${{WordPress.RAILWAY_PRIVATE_DOMAIN}}/wp-cron.php?doing_wp_cron",
+          "description": "wp-cron.php on the WordPress service, reached over the private network.",
+          "required": false
+        }
+      }
+    }
+  },
+  "buckets": []
+}
